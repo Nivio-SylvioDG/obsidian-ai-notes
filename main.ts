@@ -650,10 +650,14 @@ class TranscriptionProgressModal extends Modal {
 
         const spinner = container.createDiv('spinner');
 
-        const poweredBy = contentEl.createDiv('powered-by');
+        const poweredBy = container.createDiv('powered-by');
         poweredBy.setText('Powered by nivio.ai');
 
         this.addStyles();
+
+        // Remove background overlay for this modal only
+        const modalContainer = this.modalEl.closest('.modal-container');
+        if (modalContainer) modalContainer.classList.add('no-backdrop');
     }
 
     getStatusText(): string {
@@ -674,6 +678,12 @@ class TranscriptionProgressModal extends Modal {
     updateStatus(status: 'transcribing' | 'saving' | 'completed' | 'error') {
         this.status = status;
         this.updateContent();
+    }
+
+    onClose() {
+        // Restore backdrop class if it was removed
+        const modalContainer = this.modalEl.closest('.modal-container');
+        if (modalContainer) modalContainer.classList.remove('no-backdrop');
     }
 
     addStyles() {
@@ -699,13 +709,14 @@ class TranscriptionProgressModal extends Modal {
                 align-items: center;
                 gap: 12px;
                 text-align: center;
-                padding: 24px 28px;
+                padding: 24px 28px 40px 28px;
                 min-width: 320px;
                 border: 1px solid var(--background-modifier-border);
                 border-radius: 12px;
                 background: color-mix(in oklab, var(--background-primary) 85%, transparent);
                 backdrop-filter: blur(6px);
                 box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+                position: relative;
             }
             .transcription-progress-container .tp-icon svg {
                 color: var(--text-accent);
@@ -734,7 +745,7 @@ class TranscriptionProgressModal extends Modal {
                 margin: 6px 0 2px;
             }
             @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-            .powered-by {
+            .transcription-progress-container .powered-by {
                 position: absolute;
                 bottom: 10px;
                 right: 12px;
